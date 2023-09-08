@@ -1,0 +1,49 @@
+else if(menu.equals("Compra")){
+
+    switch(accion){
+        case "Listar":
+                List listaCompra = compraDAO.listar();
+                request.setAttribute("compra", listaCompra);
+            break;
+        
+        case "Agregar":
+                int idProveedor = request.getParameter("txtIdProveedor");
+                Date fecha = request.getParameter("txtfecha");
+                Double total = request.getParameter("txtTotal"); 
+                compra.setIdProveedor(idProveedor);
+                compra.setFecha(fecha);
+                compra.setTotal(total);
+                compraDAO.agregar(compra);
+                request.getRequestDispatcher("Controlador?menu=Compra&accion=listar").forward(request, response);
+            break;
+        
+        case "Eliminar":
+                idCompra = Integer.parseInt(request.getParameter("idCompra"));
+                proveedorDAO.eliminar(idCompra);
+                request.getRequestDispatcher("Controlador?menu=Compra&accion=listar").forward(request, response);
+            break;
+
+        case "Editar":
+		idCompra = Integer.parseInt(request.getParameter("idCompra"));
+                Compra compra = compraDAO.listarIdCompra(idCompra);
+                request.setAttribute("Compra", compra);
+                request.getRequestDispatcher("Controlador?menu=Compra&accion=listar").forward(request, response);
+            break;
+        
+        case "Actualizar":
+                int idProveedor = request.getParameter("txtIdProveedor");
+                Date fecha = request.getParameter("txtFecha");
+                Double total = request.getParameter("txtTotal"); 
+                compra.setIdProveedor(idProveedor);
+                compra.setFecha(fecha);
+                compra.setTotal(total);
+                compra.setIdCompra(idCompra);
+                compraDAO.actualizar(compra);
+                request.getRequestDispatcher("Controlador?menu=Compra&accion=listar").forward(request, response);
+            break;
+
+    }
+
+        request.getRequestDispatcher("Compra.jsp").forward(request, response);
+
+}
