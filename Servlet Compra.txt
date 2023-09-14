@@ -1,49 +1,63 @@
-else if(menu.equals("Compra")){
+else if (menu.equals("Compra")) {
 
-    switch(accion){
-        case "Listar":
-                List listaCompra = compraDAO.listar();
-                request.setAttribute("compra", listaCompra);
-            break;
-        
-        case "Agregar":
-                int idProveedor = request.getParameter("txtIdProveedor");
-                Date fecha = request.getParameter("txtfecha");
-                Double total = request.getParameter("txtTotal"); 
-                compra.setIdProveedor(idProveedor);
-                compra.setFecha(fecha);
-                compra.setTotal(total);
-                compraDAO.agregar(compra);
-                request.getRequestDispatcher("Controlador?menu=Compra&accion=listar").forward(request, response);
-            break;
-        
-        case "Eliminar":
-                idCompra = Integer.parseInt(request.getParameter("idCompra"));
-                proveedorDAO.eliminar(idCompra);
-                request.getRequestDispatcher("Controlador?menu=Compra&accion=listar").forward(request, response);
-            break;
+            switch (accion) {
+                case "Listar":
+                    List listaCompra = compraDAO.listar();
+                    System.out.println(listaCompra);
+                    request.setAttribute("compras", listaCompra);
+                    break;
 
-        case "Editar":
-		idCompra = Integer.parseInt(request.getParameter("idCompra"));
-                Compra compra = compraDAO.listarIdCompra(idCompra);
-                request.setAttribute("Compra", compra);
-                request.getRequestDispatcher("Controlador?menu=Compra&accion=listar").forward(request, response);
-            break;
-        
-        case "Actualizar":
-                int idProveedor = request.getParameter("txtIdProveedor");
-                Date fecha = request.getParameter("txtFecha");
-                Double total = request.getParameter("txtTotal"); 
-                compra.setIdProveedor(idProveedor);
-                compra.setFecha(fecha);
-                compra.setTotal(total);
-                compra.setIdCompra(idCompra);
-                compraDAO.actualizar(compra);
-                request.getRequestDispatcher("Controlador?menu=Compra&accion=listar").forward(request, response);
-            break;
+                case "Agregar":
+                    int idProveedor = Integer.parseInt(request.getParameter("txtIdProveedor")); //variables no casteadas
+                    String fechaString = request.getParameter("txtFecha");
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    Date fecha = null;
+                    try {
+                        fecha = new java.sql.Date(dateFormat.parse(fechaString).getTime());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    Double total = Double.parseDouble(request.getParameter("txtTotal")); //variable no casteada
+                    compra.setIdProveedor(idProveedor);
+                    compra.setFecha(fecha); // comentado por definicion
+                    compra.setTotal(total);
+                    compraDAO.agregar(compra);
+                    request.getRequestDispatcher("Controlador?menu=Compra&accion=Listar").forward(request, response);
+                    break;
 
-    }
+                case "Eliminar":
+                    codCompra = Integer.parseInt(request.getParameter("idCompra"));
+                    compraDAO.eliminar(codCompra);
+                    request.getRequestDispatcher("Controlador?menu=Compra&accion=Listar").forward(request, response);
+                    break;
 
-        request.getRequestDispatcher("Compra.jsp").forward(request, response);
+                case "Editar":
+                    codCompra = Integer.parseInt(request.getParameter("idCompra"));
+                    compra = compraDAO.listarCodigoCompra(codCompra); // el nombre del metodo estaba mal
+                    Date fechaCompra = compra.getFecha();
+                    request.setAttribute("compra", compra);
+                    request.getRequestDispatcher("Controlador?menu=Compra&accion=Listar").forward(request, response);
+                    break;
 
-}
+                case "Actualizar":
+                    idProveedor = Integer.parseInt(request.getParameter("txtIdProveedor")); //variable ya estaba definida y no esta casteada
+                    fechaString = request.getParameter("txtFecha"); //linea comentada por motivos de definicion de fecha
+                    dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    fecha = null;
+                    try {
+                        fecha = new java.sql.Date(dateFormat.parse(fechaString).getTime());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    total = Double.parseDouble(request.getParameter("txtTotal")); //variable ya estaba definida y no esta casteada
+                    compra.setIdProveedor(idProveedor);
+                    compra.setFecha(fecha); // comentada por definicion
+                    compra.setTotal(total);
+                    compra.setIdCompra(codCompra);
+                    compraDAO.actualizar(compra);
+                    request.getRequestDispatcher("Controlador?menu=Compra&accion=Listar").forward(request, response);
+                    break;
+
+            }
+
+            request.getRequestDispatcher("Compra.jsp").forward(request, response);
